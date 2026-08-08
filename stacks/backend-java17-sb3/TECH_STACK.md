@@ -55,5 +55,5 @@ springdoc:
 - No reintroducir `WebSecurityConfigurerAdapter`.
 - No usar H2 en pruebas de persistencia.
 
-Ver [CONVENTIONS.md](CONVENTIONS.md) y template  
-`codesa-sdd-templates/templates/backend-java17-sb3/.cursor/rules/backend-standards.mdc`.
+Ver [CONVENTIONS.md](CONVENTIONS.md) y la regla Cline condensada:  
+[`cline/rules/backend-java17-sb3.md`](../../cline/rules/backend-java17-sb3.md).

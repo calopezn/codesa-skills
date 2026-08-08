@@ -38,7 +38,7 @@ Tras instalar el template:
 | Standards del stack | `codesa-specs/specs/backend-standards.md` |
 | Agente IA | `codesa-specs/agents/backend-developer.md` |
 | OpenAPI export | `codesa-specs/specs/api-spec.yml` |
-| Reglas Cursor | `.cursor/rules/backend-standards.mdc` |
+| Reglas Cline | `.clinerules/backend-java11-sb27.md` (ver [../../cline/rules/backend-java11-sb27.md](../../cline/rules/backend-java11-sb27.md)) |
 
 ## Exportar `api-spec.yml`
 

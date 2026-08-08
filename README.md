@@ -1,6 +1,6 @@
 # codesa-skills
 
-Skills y guías operativas para **agentes de IA** (Cursor IDE, `cursor-agent`) en proyectos Codesa que adoptan **Spec-Driven Development (SDD)**.
+Skills y guías operativas para **agentes de IA** (Cline en VS Code, sobre LiteLLM + vLLM) en proyectos Codesa que adoptan **Spec-Driven Development (SDD)**.
 
 Complementa el repositorio canónico de gobierno **[codesa-sdd-templates](https://gitlab.codesa.com.co/arquitectura/ia/codesa-sdd-templates)** — no lo sustituye.
 
@@ -30,9 +30,13 @@ codesa-skills/
 │   ├── backend-java11-sb27/  ← Java 11 + SB 2.7 + Springfox
 │   ├── backend-java17-sb3/   ← Java 17 + SB 3 + springdoc
 │   └── frontend-angular13/   ← Angular 13 + api-catalog + ui-inventory
-├── skills/                   ← flujo agéntico (planes, TDD, review, …)
+├── skills/                   ← flujo agéntico completo (planes, TDD, review, …) — fuente canónica
 ├── backend/                  ← arquitectura y convenciones comunes backend
-└── frontend/                 ← arquitectura y convenciones comunes frontend
+├── frontend/                 ← arquitectura y convenciones comunes frontend
+├── cline/                    ← artefactos listos para instalar en `.clinerules/` de un repo de proyecto
+│   ├── rules/                ← reglas mínimas siempre activas (base + una por stack)
+│   └── workflows/            ← los 6 skills como comandos `/plan` `/review` `/tdd` `/verify` `/debug` `/finish`
+└── mcp-server/                ← servidor MCP "codesa-context": sirve skills/, backend/, frontend/, stacks/ bajo demanda
 ```
 
 **Paridad obligatoria** con templates: [STACKS.md](STACKS.md).
@@ -49,39 +53,53 @@ En cada **repo de proyecto** (MS o frontend), la fuente de verdad SDD vive en:
 | Agente IA del stack | `codesa-specs/agents/` |
 | Changes en curso | `openspec/changes/<ticket>/` |
 | Presets Checkstyle/ESLint | `.codesa/config/` |
-| Reglas Cursor | `.cursor/rules/` |
+| Reglas y workflows de Cline | `.clinerules/` (ver [cline/README.md](cline/README.md)) |
 
 > **No usar** `.codesa/specs/` para specs — ese prefijo es solo para **config** de herramientas.
 
 ---
 
-## Cómo usar con Cursor
+## Cómo usar con Cline
+
+Cline no descubre skills por su cuenta como sí hacía el agente de Cursor: hay que cablearlos explícitamente a sus dos mecanismos — reglas siempre activas (`.clinerules`) y workflows invocados con `/comando`. Ver el análisis completo de esta transición y su justificación arquitectónica en el documento de integración de arquitectura.
 
 ### 1. Instalar SDD en el repo del proyecto
 
-Seguir [INSTALL.md](https://gitlab.codesa.com.co/arquitectura/ia/codesa-sdd-templates/-/blob/main/INSTALL.md) del repo `codesa-sdd-templates` (script `install-codesa-sdd.ps1` / `.sh`).
+Seguir [INSTALL.md](https://gitlab.codesa.com.co/arquitectura/ia/codesa-sdd-templates/-/blob/main/INSTALL.md) del repo `codesa-sdd-templates` (script `install-codesa-sdd.ps1` / `.sh`). Este paso no cambia — sigue siendo independiente del editor.
 
-### 2. Referenciar skills en el prompt del agente
+### 2. Instalar las reglas y workflows de Cline en el repo del proyecto
 
-Ejemplos:
+Copiar en el repo destino (manual por ahora — ver [cline/README.md](cline/README.md) para el detalle y las limitaciones actuales):
 
-```text
-Antes de implementar, lee codesa-specs/agents/backend-developer.md y aplica el skill
-writing-plans de codesa-skills (repo arquitectura/ia/codesa-skills).
+```
+codesa-skills/cline/rules/base.md              → <repo>/.clinerules/base.md
+codesa-skills/cline/rules/<stack>.md           → <repo>/.clinerules/<stack>.md   (solo el stack del repo)
+codesa-skills/cline/workflows/*.md             → <repo>/.clinerules/workflows/
 ```
 
+Opcionalmente, configurar el servidor MCP `codesa-context` ([mcp-server/README.md](mcp-server/README.md)) para que los workflows puedan leer el contenido completo de un skill bajo demanda, sin necesitar un clon local de `codesa-skills`.
+
+### 3. Invocar los skills durante el desarrollo
+
+Cada skill quedó disponible como un comando explícito en el chat de Cline:
+
 ```text
-Tras completar tasks.md, ejecuta verificación según skills/verification.md de codesa-skills.
+/plan     → writing-plans.md   — crear el plan de implementación de un ticket
+/review   → code-review.md     — revisar un PR o diff
+/tdd      → tdd.md             — ciclo red-green-refactor
+/verify   → verification.md    — checklist pre-merge
+/debug    → systematic-debugging.md — investigar un fallo con evidencia
+/finish   → finishing-branch.md — cerrar rama, PR y archivar el change OpenSpec
 ```
 
-### 3. Flujo SDD recomendado
+### 4. Flujo SDD recomendado
 
 ```
 proposal.md → design.md → tasks.md
      ↓
-writing-plans (skill) → implementing (agente + .cursor/rules)
+/plan → implementing (agente + .clinerules del stack)
      ↓
-tdd → code-review → verification → finishing-branch
+/tdd → /review → /verify → /finish
 ```
 
 Integración inspirada en [obra/superpowers](https://github.com/obra/superpowers); los artefactos OpenSpec siguen siendo los de **codesa-sdd-templates** (`shared/templates/`).
@@ -90,14 +108,16 @@ Integración inspirada en [obra/superpowers](https://github.com/obra/superpowers
 
 ## Skills disponibles
 
-| Skill | Cuándo usarlo |
-|-------|----------------|
-| [writing-plans](skills/writing-plans.md) | Crear o refinar plan de implementación a partir de `tasks.md` |
-| [code-review](skills/code-review.md) | Revisar PR contra standards y antipatrones |
-| [tdd](skills/tdd.md) | Ciclo red-green-refactor en servicios y componentes |
-| [verification](skills/verification.md) | Checklist pre-merge (tests, api-spec, docs) |
-| [systematic-debugging](skills/systematic-debugging.md) | Investigar fallos con evidencia |
-| [finishing-branch](skills/finishing-branch.md) | Cerrar rama, PR y archivar change OpenSpec |
+| Skill | Cuándo usarlo | Workflow Cline |
+|-------|----------------|-----------------|
+| [writing-plans](skills/writing-plans.md) | Crear o refinar plan de implementación a partir de `tasks.md` | [`/plan`](cline/workflows/plan.md) |
+| [code-review](skills/code-review.md) | Revisar PR contra standards y antipatrones | [`/review`](cline/workflows/review.md) |
+| [tdd](skills/tdd.md) | Ciclo red-green-refactor en servicios y componentes | [`/tdd`](cline/workflows/tdd.md) |
+| [verification](skills/verification.md) | Checklist pre-merge (tests, api-spec, docs) | [`/verify`](cline/workflows/verify.md) |
+| [systematic-debugging](skills/systematic-debugging.md) | Investigar fallos con evidencia | [`/debug`](cline/workflows/debug.md) |
+| [finishing-branch](skills/finishing-branch.md) | Cerrar rama, PR y archivar change OpenSpec | [`/finish`](cline/workflows/finish.md) |
+
+Las reglas siempre activas (naming, antipatrones, no negociables) viven en [cline/rules/](cline/rules/) — una por stack, nunca las tres a la vez en el mismo repo.
 
 ---
 

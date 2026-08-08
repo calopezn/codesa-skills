@@ -37,7 +37,7 @@ Template SDD: `codesa-sdd-templates/templates/backend-java17-sb3/`
 | Standards del stack (diff vs SB 2.7) | `codesa-specs/specs/backend-standards.md` |
 | Agente IA | `codesa-specs/agents/backend-developer.md` |
 | OpenAPI | `codesa-specs/specs/api-spec.yml` |
-| Reglas Cursor | `.cursor/rules/backend-standards.mdc` |
+| Reglas Cline | `.clinerules/backend-java17-sb3.md` (ver [../../cline/rules/backend-java17-sb3.md](../../cline/rules/backend-java17-sb3.md)) |
 
 ## Exportar `api-spec.yml`
 

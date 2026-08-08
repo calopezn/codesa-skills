@@ -18,7 +18,7 @@ En el repo de proyecto, la estructura SDD es:
 ├── codesa-specs/agents/
 ├── openspec/changes/
 ├── .codesa/config/         ← solo presets Checkstyle/ESLint (no specs)
-└── .cursor/rules/
+└── .clinerules/            ← reglas + workflows de Cline (ver ../cline/README.md)
 ```
 
 Ver [INSTALL.md](https://gitlab.codesa.com.co/arquitectura/ia/codesa-sdd-templates/-/blob/main/INSTALL.md).

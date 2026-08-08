@@ -1,0 +1,22 @@
+{
+  "name": "codesa-context-mcp",
+  "version": "0.1.0",
+  "description": "Servidor MCP que sirve el contenido de codesa-skills (skills, backend, frontend, stacks) como recursos bajo demanda, para no inyectarlo completo en cada request de Cline.",
+  "type": "module",
+  "private": true,
+  "bin": {
+    "codesa-context": "dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "tsc --watch"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.12.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "typescript": "^5.6.0"
+  }
+}
